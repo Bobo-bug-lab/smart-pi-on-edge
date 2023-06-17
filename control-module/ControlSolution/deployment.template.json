@@ -3,7 +3,7 @@
   "modulesContent": {
     "$edgeAgent": {
       "properties.desired": {
-        "schemaVersion": "1.4",
+        "schemaVersion": "1.1",
         "runtime": {
           "type": "docker",
           "settings": {
@@ -57,27 +57,14 @@
           }
         },
         "modules": {
-          "CvModule": {
+          "ControlModule": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.CvModule.debug}",
-              "createOptions": {
-                "ExposedPorts": {
-                  "5678/tcp": {}
-                },
-                "HostConfig": {
-                  "PortBindings": {
-                    "5678/tcp": [
-                      {
-                        "HostPort": "5678"
-                      }
-                    ]
-                  }
-                }
-              }
+              "image": "${MODULES.ControlModule}",
+              "createOptions": {}
             }
           },
           "SimulatedTemperatureSensor": {
@@ -95,10 +82,10 @@
     },
     "$edgeHub": {
       "properties.desired": {
-        "schemaVersion": "1.4",
+        "schemaVersion": "1.1",
         "routes": {
-          "CvModuleToIoTHub": "FROM /messages/modules/CvModule/outputs/* INTO $upstream",
-          "sensorToCvModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/CvModule/inputs/input1\")"
+          "ControlModuleToIoTHub": "FROM /messages/modules/ControlModule/outputs/* INTO $upstream",
+          "sensorToControlModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/ControlModule/inputs/input1\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

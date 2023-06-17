@@ -1,0 +1,4 @@
+azure-iot-device
+opencv-contrib-python
+opencv-python
+asyncio
