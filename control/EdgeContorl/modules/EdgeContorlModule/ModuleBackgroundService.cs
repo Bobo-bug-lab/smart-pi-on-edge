@@ -86,58 +86,42 @@ internal class ModuleBackgroundService : BackgroundService
         await _moduleClient.SetInputMessageHandlerAsync("inputFromNodered", ProcessMessageFromNoderedAsync, _moduleClient);
         await _moduleClient.SetInputMessageHandlerAsync("inputFromCv", ProcessMessageFromCvAsync, _moduleClient);
     }
-
     async Task<MessageResponse> ProcessMessageFromNoderedAsync(Message message, object userContext)
     {
         var counterValue = Interlocked.Increment(ref _counter);
+
         try
         {
-            var moduleClient = (ModuleClient)userContext;
+            ModuleClient moduleClient = (ModuleClient)userContext;
             var reportedProperties = new TwinCollection();
             var messageBytes = message.GetBytes();
             var messageString = Encoding.UTF8.GetString(messageBytes);
-            Console.WriteLine($"Received message {counterValue}: [{messageString}]");
+            Console.WriteLine($"Nodered Received message {counterValue}: [{messageString}]");
 
-            // Deserialize the incoming message
             var messageBody = JsonConvert.DeserializeObject<MessageBody>(messageString);
 
-            // Update the output message with new data
-            if (messageBody != null)
+            // Process the message here
+            if (messageBody.light != null)
             {
-                _outputMessage.Properties.Add("Room",messageBody.room.ToString());
-                _outputMessage.Properties.Add("Pic diff",_pic_diff.ToString());
-                reportedProperties["pic_diff_value"] = messageBody.pic_diff;
-                reportedProperties["Room"] = messageBody.room;
-                // Combine the light and detect values from the first input
-                if (messageBody.light != null)
-                {
-                    _outputMessage.Properties.Add("light_value",messageBody.light.ToString());
-                    _outputMessage.Properties.Add("detect",messageBody.detect.ToString());
-                    reportedProperties["light_value"] = messageBody.light;
-                    reportedProperties["detect"] = messageBody.detect;
-                    detect = messageBody.detect;
-                }
-                if (messageBody.ambient != null)
-                {
-                    _outputMessage.Properties["temperature"] = messageBody.ambient.temperature?.ToString();
-                    _outputMessage.Properties["humidity"] = messageBody.ambient.humidity?.ToString();
-                    _outputMessage.Properties["timeCreated"] = messageBody.timeCreated;
-                    reportedProperties["temperature"] = messageBody.ambient.temperature;
-                    reportedProperties["humidity"] = messageBody.ambient.humidity;
-                }
-                if(PIC_DIFF_THRESHOLD > _pic_diff && detect==1)
+                if(PIC_DIFF_THRESHOLD > _pic_diff && messageBody.detect==1)
                 {
                     Console.WriteLine($"People detected");
+                    if(messageBody.light < LIGHT_THRESHOLD)
+                    {
+                        led.TurnOn();
+                    }
                 }
-                Console.WriteLine($"Updated output message: [{JsonConvert.SerializeObject(_outputMessage)}]");
+                else    led.TurnOff();
             }
+            // Create a response message
+            var responseMessageString = "Processed message from Nodered";
+            var responseMessageBytes = Encoding.UTF8.GetBytes(responseMessageString);
+            var responseMessage = new Message(responseMessageBytes);
+            reportedProperties["lastProcessedMessage"] = DateTime.UtcNow.ToString();
+            // Send the response message to "output"
+            await moduleClient.SendEventAsync("output", responseMessage);
 
-            reportedProperties["LED"] = led.GetLED();
-            // Send the output message to the specified output channel
-            await moduleClient.SendEventAsync("Room 0", _outputMessage);
-            await moduleClient.UpdateReportedPropertiesAsync(reportedProperties);
-
-            // Indicate that the message processing is completed
+            // Indicate that the message treatment is completed.
             return MessageResponse.Completed;
         }
         catch (AggregateException ex)
@@ -147,7 +131,7 @@ internal class ModuleBackgroundService : BackgroundService
                 Console.WriteLine();
                 Console.WriteLine("Error in sample: {0}", exception);
             }
-            // Indicate that the message processing is not completed
+            // Indicate that the message treatment is not completed.
             var moduleClient = (ModuleClient)userContext;
             return MessageResponse.Abandoned;
         }
@@ -155,11 +139,84 @@ internal class ModuleBackgroundService : BackgroundService
         {
             Console.WriteLine();
             Console.WriteLine("Error in sample: {0}", ex.Message);
-            // Indicate that the message processing is not completed
-            var moduleClient = (ModuleClient)userContext;
+            // Indicate that the message treatment is not completed.
+            ModuleClient moduleClient = (ModuleClient)userContext;
             return MessageResponse.Abandoned;
         }
     }
+    // async Task<MessageResponse> ProcessMessageFromNoderedAsync(Message message, object userContext)
+    // {
+    //     var counterValue = Interlocked.Increment(ref _counter);
+    //     try
+    //     {
+    //         var moduleClient = (ModuleClient)userContext;
+    //         var reportedProperties = new TwinCollection();
+    //         var messageBytes = message.GetBytes();
+    //         var messageString = Encoding.UTF8.GetString(messageBytes);
+    //         Console.WriteLine($"Received message {counterValue}: [{messageString}]");
+
+    //         // Deserialize the incoming message
+    //         var messageBody = JsonConvert.DeserializeObject<MessageBody>(messageString);
+
+    //         // Update the output message with new data
+    //         if (messageBody != null)
+    //         {
+    //             _outputMessage.Properties.Add("Room",messageBody.room.ToString());
+    //             _outputMessage.Properties.Add("Pic diff",_pic_diff.ToString());
+    //             reportedProperties["pic_diff_value"] = messageBody.pic_diff;
+    //             reportedProperties["Room"] = messageBody.room;
+    //             // Combine the light and detect values from the first input
+    //             if (messageBody.light != null)
+    //             {
+    //                 _outputMessage.Properties.Add("light_value",messageBody.light.ToString());
+    //                 _outputMessage.Properties.Add("detect",messageBody.detect.ToString());
+    //                 reportedProperties["light_value"] = messageBody.light;
+    //                 reportedProperties["detect"] = messageBody.detect;
+    //                 detect = messageBody.detect;
+    //             }
+    //             if (messageBody.ambient != null)
+    //             {
+    //                 _outputMessage.Properties["temperature"] = messageBody.ambient.temperature?.ToString();
+    //                 _outputMessage.Properties["humidity"] = messageBody.ambient.humidity?.ToString();
+    //                 _outputMessage.Properties["timeCreated"] = messageBody.timeCreated;
+    //                 reportedProperties["temperature"] = messageBody.ambient.temperature;
+    //                 reportedProperties["humidity"] = messageBody.ambient.humidity;
+    //             }
+    //             if(PIC_DIFF_THRESHOLD > _pic_diff && detect==1)
+    //             {
+    //                 Console.WriteLine($"People detected");
+    //             }
+    //             Console.WriteLine($"Updated output message: [{JsonConvert.SerializeObject(_outputMessage)}]");
+    //         }
+
+    //         reportedProperties["LED"] = led.GetLED();
+    //         // Send the output message to the specified output channel
+    //         await moduleClient.SendEventAsync("Room 0", _outputMessage);
+    //         await moduleClient.UpdateReportedPropertiesAsync(reportedProperties);
+
+    //         // Indicate that the message processing is completed
+    //         return MessageResponse.Completed;
+    //     }
+    //     catch (AggregateException ex)
+    //     {
+    //         foreach (Exception exception in ex.InnerExceptions)
+    //         {
+    //             Console.WriteLine();
+    //             Console.WriteLine("Error in sample: {0}", exception);
+    //         }
+    //         // Indicate that the message processing is not completed
+    //         var moduleClient = (ModuleClient)userContext;
+    //         return MessageResponse.Abandoned;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine();
+    //         Console.WriteLine("Error in sample: {0}", ex.Message);
+    //         // Indicate that the message processing is not completed
+    //         var moduleClient = (ModuleClient)userContext;
+    //         return MessageResponse.Abandoned;
+    //     }
+    // }
 
 
     async Task<MessageResponse> ProcessMessageFromCvAsync(Message message, object userContext)
