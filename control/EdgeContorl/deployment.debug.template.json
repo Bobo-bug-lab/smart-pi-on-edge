@@ -57,18 +57,14 @@
           }
         },
         "modules": {
-          "ControlModule": {
+          "EdgeContorlModule": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.ControlModule.debug}",
-              "createOptions": {
-                "HostConfig": {
-                  "Privileged": true
-                }
-              }
+              "image": "${MODULES.EdgeContorlModule.debug}",
+              "createOptions": {}
             }
           },
           "SimulatedTemperatureSensor": {
@@ -88,8 +84,8 @@
       "properties.desired": {
         "schemaVersion": "1.1",
         "routes": {
-          "ControlModuleToIoTHub": "FROM /messages/modules/ControlModule/outputs/* INTO $upstream",
-          "sensorToControlModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/ControlModule/inputs/input1\")"
+          "EdgeContorlModuleToIoTHub": "FROM /messages/modules/EdgeContorlModule/outputs/* INTO $upstream",
+          "sensorToEdgeContorlModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/EdgeContorlModule/inputs/input1\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

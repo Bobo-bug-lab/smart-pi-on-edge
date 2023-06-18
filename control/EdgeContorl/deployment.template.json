@@ -57,6 +57,28 @@
           }
         },
         "modules": {
+          "EdgeContorlModule": {
+            "version": "0.1.3",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.EdgeContorlModule}",
+              "createOptions": {},
+              "properties.reported":{
+                "PIC_DIFF_THRESHOLD":30,
+                "LIGHT_THRESHOLD":10
+              },
+              "properties.desired":{
+                "pic_diff":0,
+                "temperature": 0,
+                "humidity": 0,
+                "light_value": 0,
+                "detect": 0,
+                "light_STATUS": 0
+              }
+            }
+          },
           "NodeREDonIoTEdge": {
             "env": {
                 "TZ": {
@@ -87,7 +109,7 @@
               "createOptions": {}
             },
             "properties.desired":{
-              "PIC_DIFF_THRESHOLD":0.3
+              "PIC_DIFF_THRESHOLD":30
             },
             "properties.reported":{
               "pic_diff":0
@@ -134,10 +156,13 @@
             "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO BrokeredEndpoint(\"/modules/NodeREDonIoTEdge/inputs/input1\")"
           },
           "FromNodeREDonIoTEdge": {
-            "route": "FROM /messages/modules/NodeREDonIoTEdge/outputs/* INTO $upstream"
+            "route": "FROM /messages/modules/NodeREDonIoTEdge/outputs/* INTO BrokeredEndpoint(\"/modules/EdgeContorlModule/inputs/inputFromNodered\")"   
           },
           "FromCv": {
-            "route": "FROM /messages/modules/OpencvModule/outputs/* INTO $upstream"
+            "route": "FROM /messages/modules/OpencvModule/outputs/* INTO BrokeredEndpoint(\"/modules/EdgeContorlModule/inputs/inputFromCv\")"   
+          },
+          "FromEdgeContorlModuleToEndpoint": {
+            "route": "FROM /messages/modules/EdgeContorlModule/outputs/* INTO INTO $upstream"
           }
         },
         "storeAndForwardConfiguration": {
