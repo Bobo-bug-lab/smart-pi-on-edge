@@ -118,8 +118,10 @@ internal class ModuleBackgroundService : BackgroundService
             var responseMessageBytes = Encoding.UTF8.GetBytes(responseMessageString);
             var responseMessage = new Message(responseMessageBytes);
             reportedProperties["lastProcessedMessage"] = DateTime.UtcNow.ToString();
+            reportedProperties["LED"] = led.GetLED();
             // Send the response message to "output"
             await moduleClient.SendEventAsync("output", responseMessage);
+            await moduleClient.UpdateReportedPropertiesAsync(reportedProperties);
 
             // Indicate that the message treatment is completed.
             return MessageResponse.Completed;
