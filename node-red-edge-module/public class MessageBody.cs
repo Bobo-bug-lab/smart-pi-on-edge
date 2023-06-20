@@ -8,11 +8,9 @@ public class MessageBody
 
 
     //light_value, detect from esp->node;
-    public int? light{get; set;}
-    public int detect{get; set;}
-    public int room{get; set;}
-
-    public bool ledStatus{get; set;}
+    public int? light_value{get; set;}
+    public int? detect{get; set;}
+    public int? room{get; set;}
 
     
 

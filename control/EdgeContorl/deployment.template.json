@@ -58,7 +58,7 @@
         },
         "modules": {
           "EdgeContorlModule": {
-            "version": "0.1.3",
+            "version": "0.1.5",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
