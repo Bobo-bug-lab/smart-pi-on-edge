@@ -4,7 +4,7 @@ public class MessageBody
     public Ambient? ambient {get; set;}
     public string? timeCreated {get; set;}
 
-    public float pic_diff{get; set;}
+    //public float pic_diff{get; set;}
 
 
     //light_value, detect from esp->node;
@@ -13,6 +13,8 @@ public class MessageBody
     public int room{get; set;}
 
     public bool ledStatus{get; set;}
+    public double? temperature {get; set;}
+    public int? humidity {get; set;}
 
     
 
@@ -26,6 +28,30 @@ public class Ambient
 {
     public double? temperature {get; set;}
     public int? humidity {get; set;}
+}
+
+public class MessageBodySend
+{
+    public string? timeCreated {get; set;}
+
+    public float pic_diff{get; set;}
+
+
+    //light_value, detect from esp->node;
+    public int? light{get; set;}
+    public int detect{get; set;}
+    public int room{get; set;}
+
+    public bool ledStatus{get; set;}
+    public double? temperature {get; set;}
+    public int? humidity {get; set;}
+
+    
+
+}
+public class MessageBodyCV
+{
+    public float pic_diff{get; set;}
 }
 
 public class VirtualLED
