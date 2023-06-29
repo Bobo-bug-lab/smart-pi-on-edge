@@ -1,0 +1,27 @@
+ {
+    "@id": "dtmi:com:example:Building;1",
+    "@context": "dtmi:dtdl:context;2",
+    "@type": "Interface",
+    "displayName": "Building",
+    "contents": [
+      {
+        "@type": "Property",
+        "name": "name",
+        "schema": "string",
+        "writable": true
+      },
+      {
+        "@type": "Property",
+        "name": "cloud_contorl",
+        "schema": "boolean",
+        "writable": true
+      },
+      {
+        "@type": "Relationship",
+        "name": "contains_rooms",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 10,
+        "target": "dtmi:com:adt:dtsample:room;1"
+      }
+    ]
+  }

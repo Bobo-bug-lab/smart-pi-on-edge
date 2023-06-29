@@ -3,7 +3,7 @@
   "modulesContent": {
     "$edgeAgent": {
       "properties.desired": {
-        "schemaVersion": "1.1",
+        "schemaVersion": "1.4",
         "runtime": {
           "type": "docker",
           "settings": {
@@ -59,24 +59,24 @@
         "modules": {
           "NodeREDonIoTEdge": {
             "env": {
-                "TZ": {
-                    "value": "Asia/Tokyo"
-                },
-                "NODE_RED_CREDENTIAL_SECRET": {
-                    "value": "nodered"
-                },
-                "NODE_RED_ENABLE_PROJECTS": {
-                    "value": "true"
-                }
+              "TZ": {
+                "value": "Asia/Tokyo"
+              },
+              "NODE_RED_CREDENTIAL_SECRET": {
+                "value": "nodered"
+              },
+              "NODE_RED_ENABLE_PROJECTS": {
+                "value": "true"
+              }
             },
             "restartPolicy": "always",
             "settings": {
-                "image": "marketplace.azurecr.io/1604376875527/wedx-nodered",
-                "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"1880/tcp\":[{\"HostPort\":\"1880\"}]},\"Privileged\":true}}"
+              "image": "marketplace.azurecr.io/1604376875527/wedx-nodered",
+              "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"1880/tcp\":[{\"HostPort\":\"1880\"}]},\"Privileged\":true}}"
             },
             "status": "running",
             "type": "docker"
-        },
+          },
           "OpencvModule": {
             "version": "0.1.2",
             "type": "docker",
@@ -86,11 +86,11 @@
               "image": "${MODULES.OpencvModule}",
               "createOptions": {}
             },
-            "properties.desired":{
-              "PIC_DIFF_THRESHOLD":0.3
+            "properties.desired": {
+              "PIC_DIFF_THRESHOLD": 0.3
             },
-            "properties.reported":{
-              "pic_diff":0
+            "properties.reported": {
+              "pic_diff": 0
             }
           },
           "SimulatedTemperatureSensor": {
@@ -101,26 +101,26 @@
             "settings": {
               "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor",
               "createOptions": {
-  "HostConfig": {
-    "PortBindings": {
-      "5671/tcp": [
-        {
-          "HostPort": "5671"
-        }
-      ],
-      "8883/tcp": [
-        {
-          "HostPort": "8883"
-        }
-      ],
-      "443/tcp": [
-        {
-          "HostPort": "443"
-        }
-      ]
-    }
-  }
-}
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
             }
           }
         }
@@ -128,7 +128,7 @@
     },
     "$edgeHub": {
       "properties.desired": {
-        "schemaVersion": "1.1",
+        "schemaVersion": "1.4",
         "routes": {
           "SimulatedTemperatureSensorToNodered": {
             "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO BrokeredEndpoint(\"/modules/NodeREDonIoTEdge/inputs/input1\")"

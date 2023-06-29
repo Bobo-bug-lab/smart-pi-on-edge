@@ -57,13 +57,13 @@
           }
         },
         "modules": {
-          "EdgeContorlModule": {
+          "DTModule": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.EdgeContorlModule.debug}",
+              "image": "${MODULES.DTModule}",
               "createOptions": {}
             }
           },
@@ -84,8 +84,8 @@
       "properties.desired": {
         "schemaVersion": "1.4",
         "routes": {
-          "EdgeContorlModuleToIoTHub": "FROM /messages/modules/EdgeContorlModule/outputs/* INTO $upstream",
-          "sensorToEdgeContorlModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/EdgeContorlModule/inputs/input1\")"
+          "DTModuleToIoTHub": "FROM /messages/modules/DTModule/outputs/* INTO $upstream",
+          "sensorToDTModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/DTModule/inputs/input1\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

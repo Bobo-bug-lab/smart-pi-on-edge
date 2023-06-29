@@ -1,0 +1,34 @@
+{
+    "@id": "dtmi:com:adt:dtsample:room;1",
+    "@type": "Interface",
+    "@context": "dtmi:dtdl:context;2",
+    "displayName": "Room",
+    "contents": [
+      {
+        "@type": "Property",
+        "name": "id",
+        "schema": "integer"     
+      }, 
+      {
+        "@type": "Property",
+        "name": "detect",
+        "schema": "integer"     
+      }, 
+      {
+        "@type": "Property",
+        "name": "humidity",
+        "schema": "integer"     
+      }, 
+      {
+        "@type": "Property",
+        "name": "ledStatus",
+        "schema": "boolean"     
+      },    
+      {
+        "@type": "Property",
+        "name": "Temperature",
+        "schema": "double"      
+      }
+    ]
+  }
+
