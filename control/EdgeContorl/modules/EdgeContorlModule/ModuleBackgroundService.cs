@@ -156,7 +156,7 @@ internal class ModuleBackgroundService : BackgroundService
                 {
                     led.TurnOff();
                 }
-                _mainMessageBody.ledStatus = led.GetLED();
+                
             }
             else
             {
@@ -165,6 +165,14 @@ internal class ModuleBackgroundService : BackgroundService
                 _mainMessageBody.timeCreated = messageBody.timeCreated;
             }
 
+            bool ledCloudControl = await DigitalTwinsService.LightCloudControl(messageBody.room , led.GetLED());
+            Console.WriteLine($"DigitalTwinsService.LightCloudControl returned: {ledCloudControl}");
+
+
+            if(ledCloudControl) led.TurnOn();
+            else led.TurnOff();
+                
+            _mainMessageBody.ledStatus = led.GetLED();
             _mainMessageBody.pic_diff = _pic_diff;
             _mainMessageBody.room = messageBody.room;
             // Create a response message

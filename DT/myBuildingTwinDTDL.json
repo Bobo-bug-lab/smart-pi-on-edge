@@ -12,7 +12,13 @@
       },
       {
         "@type": "Property",
-        "name": "cloud_contorl",
+        "name": "cloud_control",
+        "schema": "boolean",
+        "writable": true
+      },
+      {
+        "@type": "Property",
+        "name": "light_controller",
         "schema": "boolean",
         "writable": true
       },

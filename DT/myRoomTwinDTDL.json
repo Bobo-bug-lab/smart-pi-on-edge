@@ -18,16 +18,18 @@
         "@type": "Property",
         "name": "humidity",
         "schema": "integer"     
-      }, 
-      {
-        "@type": "Property",
-        "name": "ledStatus",
-        "schema": "boolean"     
-      },    
+      },   
       {
         "@type": "Property",
         "name": "Temperature",
         "schema": "double"      
+      },
+      {
+        "@type": "Relationship",
+        "name": "contains_lights",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 10,
+        "target": "dtmi:com:adt:dtsample:light;1"
       }
     ]
   }

@@ -1,0 +1,13 @@
+{
+  "@id": "dtmi:com:adt:dtsample:light;1",
+  "@type": "Interface",
+  "@context": "dtmi:dtdl:context;2",
+  "displayName": "Light",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "ledStatus",
+      "schema": "boolean"     
+    }
+  ]
+}
