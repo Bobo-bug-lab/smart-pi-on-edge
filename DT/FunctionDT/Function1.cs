@@ -41,12 +41,9 @@ namespace FunctionDT
                 {
                     log.LogInformation(eventGridEvent.Data.ToString());
 
-                    // <Find_device_ID_and_temperature>
-
                     JObject deviceMessage = (JObject)JsonConvert.DeserializeObject(eventGridEvent.Data.ToString());
                     string bodyValue = deviceMessage["body"].ToString();
                     log.LogInformation($"bodyValue:{bodyValue}");
-                    //string deviceId = (string)deviceMessage["systemProperties"]["iothub-connection-device-id"];
 
                     byte[] bytes = Convert.FromBase64String(bodyValue);
                     string decodedString = Encoding.UTF8.GetString(bytes);
@@ -64,13 +61,11 @@ namespace FunctionDT
 
                     var light = decodedMessage["ledStatus"].Value<bool>();
 
-                    // </Find_device_ID_and_temperature>
-
                     log.LogInformation($"Device:{roomId} Temperature is:{temperature}");
                     log.LogInformation($"Device:{roomId} humidity is:{humidity}");
                     log.LogInformation($"Device:{roomId} humidity is:{detected}");
 
-                    // <Update_twin_with_device_temperature>
+                    // <Update_twin_with_device_properties>
                     var updateRoomData = new JsonPatchDocument();
                     var updateLightData = new JsonPatchDocument();
                     updateRoomData.AppendReplace("/Temperature", temperature);
@@ -80,7 +75,7 @@ namespace FunctionDT
                     updateLightData.AppendReplace("/ledStatus", light);
                     await client.UpdateDigitalTwinAsync(roomId, updateRoomData);
                     await client.UpdateDigitalTwinAsync(lightId, updateLightData);
-                    // </Update_twin_with_device_temperature>
+
                 }
             }
             catch (Exception ex)
